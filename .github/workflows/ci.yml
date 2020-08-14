@@ -19,25 +19,19 @@ jobs:
     - name: Fetch master
       run: git fetch origin master
 
-    - name: Log 1
-      run: git log --all --graph --oneline --decorate
-
     - name: Rebase on master
       run: git rebase origin/master
-
-    - name: Log 2
-      run: git log --all --graph --oneline --decorate
 
     - name: Merge into master
       run: |
         git checkout -b master origin/master
         git merge ${GITHUB_REF}
 
-    - name: Log 2
-      run: git log --all --graph --oneline --decorate
-
     - name: Build
       run: ./gradlew build
 
     - name: Publish
       run: git push origin master
+
+    - name: Cleanup branch
+      run: git push origin :${GITHUB_REF}
