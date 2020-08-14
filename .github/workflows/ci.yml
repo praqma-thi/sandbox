@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+    branches: [ 'ready/**' ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Gradle build
+      run: ./gradlew build
