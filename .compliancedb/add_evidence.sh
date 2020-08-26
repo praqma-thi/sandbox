@@ -15,5 +15,5 @@
 curl -H 'Content-Type: application/json' \
      -u $1:unused \
      -X PUT \
-     -d '{"evidence_type": "'"$3"'", "contents": {"is_compliant": '$4', "url": "'"$5"'", "description": "'"$6"'"}}' \
+     -d '{"evidence_type": "'"$3"'", "contents": {"is_compliant": "'"$4"'", "url": "'"$5"'", "description": "'"$6"'"}}' \
      https://app.compliancedb.com/api/v1/projects/praqma-thi/sandbox/artifacts/$2
