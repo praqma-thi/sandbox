@@ -14,22 +14,32 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Fetch master
-      run: git fetch origin master
-
-    - name: Rebase on master
-      run: git rebase origin/master
-
-    - name: Merge into master
+    - name: Integrate
       run: |
+        git fetch origin master
+        git rebase origin/master
         git checkout -b master origin/master
         git merge ${GITHUB_REF}
+        MERGE_SHA=`git rev-parse HEAD`
 
-    - name: Build
-      run: ./gradlew build
+    - name: Compile
+      run: ./gradlew compileKotlin
+
+    - name: CDB_Publish
+      env:
+        CDB_TOKEN: ${{ secrets.compliancedb_token }}
+      run: ./.compliancedb/create_artifact.sh $CDB_TOKEN $GITHUB_SHA "sandbox.dll" "Artifact description goes here" $MERGE_SHA
+
+    - name: Test
+      run: ./gradlew test
+
+    - name: CDB_Evidence
+      env:
+        CDB_TOKEN: ${{ secrets.compliancedb_token }}
+      run: ./.compliancedb/add_evidence.sh $CDB_TOKEN $GITHUB_SHA "integration_test" $GITHUB_SERVER_URL "Evidence description goes here"
 
     - name: Publish
       run: git push origin master
 
-    - name: Cleanup branch
+    - name: Cleanup
       run: git push origin :${GITHUB_REF}
