@@ -36,7 +36,7 @@ jobs:
     - name: CDB_Evidence
       env:
         CDB_TOKEN: ${{ secrets.compliancedb_token }}
-      run: ./.compliancedb/add_evidence.sh $CDB_TOKEN $GITHUB_SHA "integration_test" $GITHUB_SERVER_URL "Evidence description goes here"
+      run: ./.compliancedb/add_evidence.sh $CDB_TOKEN $GITHUB_SHA "integration_test" true $GITHUB_SERVER_URL "Evidence description goes here"
 
     - name: Publish
       run: git push origin master
