@@ -1,0 +1,42 @@
+name: Publish
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Archive
+      shell: bash
+      run: git archive --output=git.zip HEAD
+
+    - name: Get tag
+      id: get_tag
+      run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+
+    - name: Create GitHub release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Attach
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./git.zip
+        asset_name: git-${{ steps.get_tag.outputs.TAG }}.zip
+        asset_content_type: application/zip
